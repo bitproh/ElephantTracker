@@ -1,0 +1,42 @@
+/* Main container */
+.main {
+    width: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.5) 50%), url('1.jpg');
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+    display: flex; /* Use Flexbox */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+}
+
+/* Title styling */
+.title {
+    text-align: center;
+    color: #ff7200;
+    font-size: 4rem; /* Adjust size */
+    font-weight: bold;
+    animation: fadeIn 2s ease-in-out;
+    margin: 0; /* Remove extra margin */
+  
+}
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+.elephant-card {
+    background: white;
+    padding: 15px;
+    margin: 15px auto;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+img {
+    max-width: 100%;
+    border-radius: 10px;
+}

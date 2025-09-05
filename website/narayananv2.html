@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Tracker</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Retrieving Your Location</h1>
+    <p>Your current location:</p>
+    <p id="location"></p>
+
+    <div id="map"></div>
+
+    <script>
+        function initMap() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Get latitude and longitude
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+
+                    // Display the location on the page
+                    document.getElementById('location').innerHTML = `Latitude: ${latitude}, Longitude: ${longitude}`;
+
+                    // Create the map centered around the user's location
+                    let userLocation = { lat: latitude, lng: longitude };
+                    let map = new google.maps.Map(document.getElementById("map"), {
+                        zoom: 12,
+                        center: userLocation
+                    });
+
+                    // Add a marker to the map
+                    new google.maps.Marker({
+                        position: userLocation,
+                        map: map,
+                        title: "Your Location"
+                    });
+                }, function(error) {
+                    // Handle errors (e.g., if user denies location access)
+                    alert("Error getting location: " + error.message);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+
+</body>
+</html>

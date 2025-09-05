@@ -1,0 +1,242 @@
+\<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elephant Tracking System</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Maps API with Your API Key -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwV_Zd-59U94o9gVrmAp-u018Fe_jkgfg&callback=initMap" async defer></script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW5m3f-LcgTotUEBG4-z2aLr9Ri2JNJZ0",
+            authDomain: "edss-f657a.firebaseapp.com",
+            projectId: "edss-f657a",
+            storageBucket: "edss-f657a.appspot.com",
+            messagingSenderId: "247327625316",
+            appId: "1:247327625316:web:d07d720f958ee189664f71",
+            measurementId: "G-2HZ2QL6HGW"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Fetch Elephants Data
+        async function fetchElephants() {
+            const elephantsCollection = collection(db, "elephants");
+            const querySnapshot = await getDocs(elephantsCollection);
+
+            let elephantList = document.getElementById("elephant-list");
+            elephantList.innerHTML = ""; // Clear previous data
+
+            querySnapshot.forEach((doc) => {
+    let data = doc.data();
+    console.log(data.img); // Debugging step
+    let imageUrl = data.img ? data.img : "default-image.jpg"; 
+    let elephantItem = `
+        <div class="elephant-card">
+            <h3>${data.Name}</h3>
+            <p><strong>Age:</strong> ${data.age}</p>
+            <p><strong>conservation status:</strong> ${data.conservation_status}</p>
+           <img src="${imageUrl}" alt="Elephant Image" style="width:600px; height:600px; border-radius:10px;">
+        </div>
+    `;
+    elephantList.insertAdjacentHTML("beforeend", elephantItem);
+});
+
+        }
+
+        // Load Data When "Repository" is Clicked
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("repository-link").addEventListener("click", fetchElephants);
+        });
+
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .main {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.5) 50%), url('1.jpg');
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+
+        .title {
+            text-align: center;
+            color: #ff7200;
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .navbar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 100px;
+            left: 0;
+            z-index: 100;
+        }
+        .menu{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .menu ul {
+            display: flex;
+            list-style: none;
+        }
+
+        .menu ul li {
+            margin: 0 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .menu ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-family: 'Trebuchet MS', Arial, sans-serif;
+            transition: 0.8s ease-in-out;
+            cursor: pointer;
+        }
+
+        .menu ul li a:hover {
+            color: orange;
+        }
+
+        .content {
+            display: none;
+            padding: 40px;
+            background: rgb(246, 206, 133);
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 100%;
+            color: rgb(1, 1, 1);
+            font-family: 'Times New Roman', Times, serif;
+            font-size: medium;
+            animation: slideIn 1s forwards ease-in-out;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <h1 class="title">Elephant Detection and Surveillance System</h1>
+
+        <header class="navbar">
+            <div class="menu">
+                <ul>
+                    <li><a onclick="showContent('home')">Home</a></li>
+                    <li><a onclick="showContent('About')">About</a></li>
+                    <li><a onclick="showContent('tracking')">Live Elephant Tracking</a></li>
+                    <li><a id="repository-link" href="repository.html">Repository</a></li>
+                    <li><a onclick="showContent('team')">Our Team</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <div id="home" class="content">
+            <h2>Welcome to the Elephant Detection and Surveillance System</h2>
+            <p>Elephant Detection and Surveillance System, a cutting-edge project designed to ensure the safety of elephants and local communities. By utilizing real-time tracking technology, we monitor the movements of elephants to prevent human-elephant conflicts and protect these majestic creatures. Our system provides crucial data that aids in conservation efforts, supports wildlife management, and helps researchers understand migration patterns. Join us in making a difference by fostering harmony between wildlife and human populations for a sustainable future.</p>
+        </div>
+        <div id="About" class="content">
+        <h2>About Us</h2>
+                
+        <p>Our project, the Elephant Detection and Surveillance System, aims to monitor and protect elephants through cutting-edge technology. By integrating real-time GPS tracking and advanced analytics, we provide insights into elephant movements to help mitigate human-elephant conflicts and support wildlife conservation efforts.</p>
+        <h3>  Objectives:</h3> 
+        <p>- To develop a system that tracks elephants in real-time, providing location data to prevent human-wildlife conflicts.</p> 
+        <p>- To develop a user-friendly interface for monitoring elephant movement data, enabling wildlife officers, researchers, and conservationists to make informed decisions quickly and effectively.</p>
+
+          <p>To create a database that stores elephant movement data and patterns, facilitating long-term research, analysis, and conservation strategies, while also enabling public awareness and engagement.</p> 
+        <p>-To create alerts for authorities when elephants are near human settlements or vulnerable areas.</p> 
+        <h4> Motivation: </h4>
+          
+          <p>-Rising human-elephant conflict due to urbanization and agricultural encroachment.</p> 
+          <p>-The increasing threat to elephant populations from poaching and habitat loss.</p> 
+          <p>-The need for innovative solutions to ensure peaceful coexistence between humans and elephants while preserving the species for future generations.</p>
+    </div>
+        <div id="tracking" class="content">
+            <h2>Live Elephant Tracking</h2>
+            <div id="map"></div>
+            <p>Real-time updates on elephant movements.</p>
+        </div>
+
+        <div id="repository" class="content">
+            <h2>Repository</h2>
+            <p>Details of elephants stored in the database:</p>
+            <div id="elephant-list"></div>
+            
+        </div>
+
+        <div id="team" class="content">
+            <h2>Meet the Experts</h2>
+            <p><strong>Asif Muhammed Sadhik</strong> - Head, Image processing using ML</p>
+            <p><strong>Anna Sumey Ajith</strong> - Image Processing</p>
+            <p><strong>Abia Abraham</strong> - Website Design & Hardware</p>
+            <p><strong>Nikheth Binu</strong> - Hardware Implementation and website management</p>
+        </div>
+    </div>
+
+    <script>
+        let map, marker;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 10,
+                center: { lat: 8.5241, lng: 76.9366 },
+            });
+
+            marker = new google.maps.Marker({
+                position: { lat: 8.5241, lng: 76.9366 },
+                map: map,
+                title: "Elephant Location"
+            });
+
+            updateLocation();
+            setInterval(updateLocation, 5000);
+        }
+
+        function updateLocation() {
+            fetch("https://your-firebase-db.firebaseio.com/elephant_tracking/elephant1.json")
+                .then(response => response.json())
+                .then(data => {
+                    let elephantPosition = { lat: data.latitude, lng: data.longitude };
+                    marker.setPosition(elephantPosition);
+                    map.setCenter(elephantPosition);
+                })
+                .catch(error => console.error("Error fetching location:", error));
+        }
+
+        function showContent(sectionId) {
+            document.querySelectorAll('.content').forEach(content => content.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

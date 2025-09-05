@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narayanankutty - Details</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwV_Zd-59U94o9gVrmAp-u018Fe_jkgfg&callback=initMap" async defer></script>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: auto;
+            text-align: center;
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Narayanankutty</h1>
+        <p><strong>Age:</strong> 35 years</p>
+        <p><strong>Body Bulk:</strong> Large</p>
+        <p><strong>Remarks:</strong> Calm but territorial</p>
+
+        <h2>Current Location</h2>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        function initMap() {
+            let elephantLocation = { lat: 9.51137, lng: 76.54627 };
+            let map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: elephantLocation
+            });
+
+            new google.maps.Marker({
+                position: elephantLocation,
+                map: map,
+                title: "Narayanankutty's Location"
+            });
+        }
+    </script>
+
+</body>
+</html>
