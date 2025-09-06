@@ -1,0 +1,11 @@
+train: D:/Projects/Edss/dataset/images/train
+val: D:/Projects/Edss/dataset/images/val
+test: D:/Projects/Edss/dataset/images/test  # Optional, include if you have a test set
+
+# Number of classes
+nc: 2
+
+# Class names
+names:
+ 0: elephant1
+ 1: elephant2
