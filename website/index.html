@@ -1,18 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Detection Notification</title>
-    <script>
-        async function checkStatus() {
-            const response = await fetch('/status');
-            const data = await response.json();
-            document.getElementById('notification').innerText = data.detection;
-        }
-        setInterval(checkStatus, 5000); // Check status every 5 seconds
-    </script>
+  <meta charset="utf-8">
+  <title>Elephant Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    #map { height: 100vh; width: 100%; }
+  </style>
 </head>
 <body>
-    <h1>Detection Notification</h1>
-    <p id="notification">No detection.</p>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize map (centered on Kerala)
+    const map = L.map('map').setView([9.9312, 76.2673], 8);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Fetch detections from Flask API
+    async function loadEvents() {
+      const res = await fetch('/api/events');
+      const events = await res.json();
+
+      // Clear old markers
+      if (window.markers) {
+        window.markers.forEach(m => map.removeLayer(m));
+      }
+      window.markers = [];
+
+      events.forEach(ev => {
+        const marker = L.marker([ev.lat, ev.lon]).addTo(map);
+        marker.bindPopup(`
+          <b>${ev.elephant_id}</b><br>
+          Device: ${ev.device_id}<br>
+          Time: ${ev.timestamp}
+        `);
+        window.markers.push(marker);
+      });
+    }
+
+    // Load initially and refresh every 5 sec
+    loadEvents();
+    setInterval(loadEvents, 5000);
+  </script>
 </body>
 </html>
