@@ -66,6 +66,11 @@ for box in results[0].boxes:
                     # Open Google Maps in browser
                     maps_url = f"https://www.google.com/maps/search/?api=1&query={9.5100},{76.5514}"
                     webbrowser.open(maps_url)
+                    data = {
+                    "elephant": "lakshmikutty",
+                    "location": "9.5100, 76.5514"
+                    }
+                    requests.post("http://172.20.10.3:5000/update", json=data)  # IP of Laptop B
                 
                 else:
                     print("Failed to retrieve weather data.")
@@ -94,12 +99,20 @@ for box in results[0].boxes:
                     # Open Google Maps in browser
                     maps_url = f"https://www.google.com/maps/search/?api=1&query={9.5100},{76.5514}"
                     webbrowser.open(maps_url)
+                    data = {
+                    "elephant": "lakshmikutty",
+                    "location": "9.5100, 76.5514"
+                    }
+                    requests.post("http://172.20.10.3:5000/update", json=data)  # IP of Laptop B
                 
                 else:
                     print("Failed to retrieve weather data.")
 
+    
+
+    
             else:
-                print("Could not determine location.")
+                     print("Could not determine location.")
 
 if not detected:
     print("No elephant detected.")
