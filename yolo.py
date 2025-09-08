@@ -19,7 +19,7 @@ custom_names = {0: 'lakshmikutty', 1: 'narayanankutty'}
 image_folder = "C:\\Users\\abiaa\\Downloads\\final_year_project\\ElephantTracker\\components"
 
 # Flask server IP (run server.py on another laptop, replace with that laptop’s IP)
-SERVER_URL = "http://192.168.184.196:5000/api/events"  # <-- change IP to your server machine
+SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:5000/api/events")
 
 # -----------------------------
 # IMAGE SELECTION
