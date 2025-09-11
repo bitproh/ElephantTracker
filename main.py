@@ -1,52 +1,35 @@
+import sys
 import cv2
-import os
-from datetime import datetime
 from ultralytics import YOLO
-import subprocess
 
-# Load COCO-trained YOLOv8 model
-model = YOLO('yolov8n.pt')  # Replace with your actual model path
+# Load your custom-trained model
+model = YOLO("last.pt")
 
-# Start webcam
-cap = cv2.VideoCapture(0)
-if not cap.isOpened():
-    print("Failed to access webcam")
-    exit()
+# Manually define class names
+custom_names = {0: 'lakshmikutty', 1: 'narayanankutty'}
 
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        print("Failed to capture frame")
-        break
+# Get image path from command-line argument
+if len(sys.argv) < 2:
+    print("Usage: python best.py <image_path>")
+    sys.exit(1)
 
-    results = model(frame)
+image_path = sys.argv[1]
+img = cv2.imread(image_path)
 
-    for box in results[0].boxes:
-        cls_id = int(box.cls[0])
-        class_name = model.names[cls_id]
+# Run inference
+results = model(img)
 
-        if class_name.lower() == "elephant":
-            # Save image
-            folder_path = os.path.join("static", "images", "elephant")
-            os.makedirs(folder_path, exist_ok=True)
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            filename = f"elephant_{timestamp}.jpg"
-            filepath = os.path.join(folder_path, filename)
-            cv2.imwrite(filepath, frame)
+# Check for custom classes
+detected_classes = set()
+for box in results[0].boxes:
+    cls_id = int(box.cls[0])
+    class_name = custom_names.get(cls_id, f"class_{cls_id}")
+    if class_name in custom_names.values():
+        detected_classes.add(class_name)
 
-            print(f"Elephant detected — saved to {filepath}")
-
-            # Release camera and close OpenCV window
-            cap.release()
-            cv2.destroyAllWindows()
-
-            # Call best.py and pass image path
-            subprocess.run(["python", "best.py", filepath])
-            exit()
-
-    cv2.imshow("Elephant Detection", frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+# Show results in terminal
+if detected_classes:
+    for cls in detected_classes:
+        print(f"Detected: {cls}")
+else:
+    print("No target class detected in the image.")

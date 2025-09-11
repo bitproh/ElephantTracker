@@ -2,40 +2,30 @@ import os
 import random
 import cv2
 from ultralytics import YOLO
-import geocoder
 import requests
 import datetime
+import pytz  # For Indian timezone
 
 # -----------------------------
 # CONFIG
 # -----------------------------
-# Load your custom-trained model
 model = YOLO("best.pt")
-
-# Define class names (must match your training)
 custom_names = {0: 'lakshmikutty', 1: 'narayanankutty'}
-
-# Folder containing test images
 image_folder = "C:\\Users\\abiaa\\Downloads\\final_year_project\\ElephantTracker\\components"
-
-# Flask server IP (run server.py on another laptop, replace with that laptop’s IP)
 SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:5000/api/events")
 
 # -----------------------------
 # IMAGE SELECTION
 # -----------------------------
 images = [f for f in os.listdir(image_folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-
 if not images:
     print("No images found in 'components' folder.")
     exit()
 
-# Randomly select one image
 selected_image = random.choice(images)
 image_path = os.path.join(image_folder, selected_image)
 print(f"Selected image: {selected_image}")
 
-# Load image and run inference
 img = cv2.imread(image_path)
 results = model(img)
 
@@ -43,6 +33,8 @@ results = model(img)
 # PARSE DETECTIONS
 # -----------------------------
 detected = False
+india_tz = pytz.timezone("Asia/Kolkata")  # IST timezone
+
 for box in results[0].boxes:
     cls_id = int(box.cls[0])
     conf = float(box.conf[0])
@@ -52,36 +44,30 @@ for box in results[0].boxes:
         print(f"✅ Detected: {class_name} with {conf:.2f} confidence")
         detected = True
 
-        # -----------------------------
-        # GET LOCATION
-        # -----------------------------
+        # Fixed coordinates
         if class_name == "lakshmikutty":
-    # Fixed coordinates (Kottayam region)
-               lat, lon = 9.5100, 76.5514
+            lat, lon = 9.5100, 76.5514
         elif class_name == "narayanankutty":
-    # Fixed coordinates (Idukki region, example)
-               lat, lon = 9.6100, 77.5514
+            lat, lon = 9.6100, 77.5514
         else:
-               lat, lon = None, None
+            lat, lon = None, None
 
         if lat is not None and lon is not None:
-            import pytz
-            india = pytz.timezone("Asia/Kolkata")
-            timestamp = datetime.datetime.now(india).isoformat()
+            # IST timestamp (12-hour format for printing if needed)
+            now_ist = datetime.datetime.now(india_tz)
+            timestamp_iso = now_ist.strftime("%Y-%m-%dT%H:%M:%S%z")  # ISO format with IST offset
+
             print(f"🐘 Elephant ID: {class_name}")
-
             print(f"📍 Location: Latitude {lat}, Longitude {lon}")
-            print(f"🕒 Detection Time (UTC): {timestamp}")
-
-            
+            print(f"🕒 Detection Time (IST): {timestamp_iso}")
 
             # -----------------------------
             # SEND TO FLASK SERVER
             # -----------------------------
             data = {
                 "elephant_id": class_name,
-                "device_id": "cam1",   # Change if running on another laptop
-                "timestamp": timestamp,
+                "device_id": "cam1",
+                "timestamp": timestamp_iso,  # This will be IST
                 "lat": lat,
                 "lon": lon
             }
@@ -91,7 +77,6 @@ for box in results[0].boxes:
                 print("🌍 Sent to server:", response.json())
             except Exception as e:
                 print("❌ Error sending to server:", e)
-
         else:
             print("⚠️ Could not determine location.")
 

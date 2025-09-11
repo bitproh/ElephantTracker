@@ -1,62 +1,193 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Elephant Tracker</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elephant Detection and Surveillance System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <style>
-    #map { height: 100vh; width: 100%; }
-  </style>
+  <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
-  <div id="map"></div>
 
+<body class="bg-slate-100 text-gray-800">
+
+  <!-- Main Container -->
+  <div id="app" class="min-h-screen flex flex-col">
+
+    <!-- Home Page -->
+    <main id="home" class="page active flex-grow">
+      <div class="home-background w-full min-h-screen flex flex-col items-center justify-center p-4 bg-black bg-opacity-50">
+        <div class="text-center text-white mb-12">
+          <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-black">Elephant Detection & Surveillance System</h1>
+          <p class="text-lg md:text-xl mt-4 font-bold">Monitoring and protecting our majestic giants.</p>
+        </div>
+
+        <div class="space-y-6 w-full max-w-md md:max-w-lg">
+          <!-- Live Elephant Tracking Box -->
+          <div id="nav-tracking" class="curved-box bg-white/80 backdrop-blur-sm p-6 md:p-8 text-center cursor-pointer" onclick="showPage('tracking')">
+            <h2 class="text-2xl font-bold text-slate-800">Live Elephant Tracking</h2>
+            <p class="mt-2 text-slate-600">View real-time locations of monitored herds on the map.</p>
+          </div>
+
+          <!-- Elephant Repository Box -->
+          <div id="nav-repository" class="curved-box bg-white/80 backdrop-blur-sm p-6 md:p-8 text-center cursor-pointer" onclick="showPage('repository')">
+            <h2 class="text-2xl font-bold text-slate-800">Elephant Repository</h2>
+            <p class="mt-2 text-slate-600">Browse detailed profiles of individual elephants.</p>
+          </div>
+
+          <!-- Our Team Box -->
+          <div id="nav-team" class="curved-box bg-white/80 backdrop-blur-sm p-6 md:p-8 text-center cursor-pointer" onclick="showPage('team')">
+            <h2 class="text-2xl font-bold text-slate-800">Our Team</h2>
+            <p class="mt-2 text-slate-600">Meet the dedicated members behind this project.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Live Elephant Tracking Page -->
+    <section id="tracking" class="page flex-grow">
+      <div class="relative min-h-screen bg-slate-50">
+        <button onclick="showPage('home')" class="absolute top-4 right-4 bg-slate-800 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-slate-700 transition z-10">Back to Home</button>
+        <div class="p-8 pt-20">
+          <h1 class="text-3xl font-bold text-center mb-8 text-slate-800">Live Elephant Tracking</h1>
+          <div class="w-full h-[60vh] md:h-[70vh] bg-gray-300 rounded-lg shadow-lg flex items-center justify-center overflow-hidden">
+           <div id="map" class="w-full h-full rounded-lg"></div>
+          </div>
+          <p class="text-center mt-4 text-slate-600">This map shows real-time locations from multiple systems.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Elephant Repository Page -->
+    <section id="repository" class="page flex-grow">
+      <div class="relative min-h-screen">
+        <button onclick="showPage('home')" class="absolute top-4 right-4 bg-slate-800 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-slate-700 transition">Back to Home</button>
+        <div class="container mx-auto p-8 pt-20">
+          <h1 class="text-4xl font-bold text-center mb-12 text-black">Elephant Repository</h1>
+          <div class="flex flex-col items-center space-y-12">
+            <!-- Elephant 1 -->
+            <div class="bg-white/80 p-6 rounded-lg shadow-xl w-full max-w-2xl text-center">
+              <img src="naran.jpg" alt="Narayanankutty" class="w-full h-64 object-cover rounded-md mx-auto mb-4">
+              <h2 class="text-2xl font-bold text-slate-700">Narayanankutty</h2>
+            </div>
+            <!-- Elephant 2 -->
+            <div class="bg-white/80 p-6 rounded-lg shadow-xl w-full max-w-2xl text-center">
+              <img src="laksh.jpg" alt="Lakshmikkutty" class="w-full h-64 object-cover rounded-md mx-auto mb-4">
+              <h2 class="text-2xl font-bold text-slate-700">Lakshmikkutty</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Our Team Page -->
+    <section id="team" class="page flex-grow">
+      <div class="relative min-h-screen bg-slate-50">
+        <button onclick="showPage('home')" class="absolute top-4 right-4 bg-slate-800 text-white py-2 px-4 rounded-lg shadow-lg hover:bg-slate-700 transition">Back to Home</button>
+        <div class="container mx-auto p-8 pt-20">
+          <h1 class="text-3xl font-bold text-center mb-12 text-slate-800">Our Team</h1>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+              <img src="https://placehold.co/200x200/a5b4fc/1e293b?text=Team" alt="Team Member 1" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-slate-200">
+              <h3 class="text-xl font-semibold text-slate-700">Asif Muhammed Sadhika</h3>
+              <p class="text-slate-500">Head, Image processing using ML</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+              <img src="https://placehold.co/200x200/a5b4fc/1e293b?text=Team" alt="Team Member 2" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-slate-200">
+              <h3 class="text-xl font-semibold text-slate-700">Anna Sumey Ajith</h3>
+              <p class="text-slate-500">Image Processing</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+              <img src="https://placehold.co/200x200/a5b4fc/1e293b?text=Team" alt="Team Member 3" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-slate-200">
+              <h3 class="text-xl font-semibold text-slate-700">Abia Abraham</h3>
+              <p class="text-slate-500">Website Design & Hardware</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+              <img src="https://placehold.co/200x200/a5b4fc/1e293b?text=Team" alt="Team Member 4" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-slate-200">
+              <h3 class="text-xl font-semibold text-slate-700">Nikheth Binu</h3>
+              <p class="text-slate-500">Hardware Implementation and website management</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white text-center p-8">
+      <div class="container mx-auto">
+        <h2 class="text-2xl font-bold mb-2">About Us</h2>
+        <p class="max-w-3xl mx-auto mb-4 text-slate-s300">
+          We are a dedicated team of researchers and conservationists committed to leveraging technology for the protection of elephants. Our surveillance system helps prevent human-elephant conflict and aids in anti-poaching efforts.
+        </p>
+        <div>
+          <p class="font-semibold">Contact Us:</p>
+          <p>Email: contact@elephant-surveillance.org | Phone: +91-123-456-7890</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-  // Initialize map (centered on Kerala)
-  const map = L.map('map').setView([9.9312, 76.2673], 8);
+    // -------------------
+    // Page Navigation
+    // -------------------
+    const pages = document.querySelectorAll('.page');
+    const initialPage = 'home';
 
-  // Add OpenStreetMap tiles
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-  }).addTo(map);
+    function showPage(pageId) {
+      pages.forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      window.scrollTo(0, 0);
+      if(pageId === 'tracking') setTimeout(()=>map.invalidateSize(), 200);
+    }
 
-  // Fetch detections from Flask API
- async function loadEvents() {
-  // Only get detections from the last 1 hour
-  const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const res = await fetch('/api/events?since=' + since);
-  const events = await res.json();
+    document.addEventListener('DOMContentLoaded', ()=>showPage(initialPage));
 
-  // Clear old markers from map
-  if (window.markers) {
-    window.markers.forEach(m => map.removeLayer(m));
-  }
-  window.markers = [];
+    // -------------------
+    // Leaflet Map
+    // -------------------
+    const map = L.map('map').setView([9.9312, 76.2673], 8);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
-  // Add new markers
-  events.forEach(ev => {
-    const marker = L.marker([ev.lat, ev.lon]).addTo(map);
+    // -------------------
+    // Load events (last 1 hour) and show IST
+    // -------------------
+    async function loadEvents() {
+      try {
+        const since = new Date(Date.now() - 60*60*1000).toISOString();
+        const res = await fetch('/api/events?since=' + since);
+        const events = await res.json();
 
-    // Convert UTC to IST for display
-    const utcDate = new Date(ev.timestamp);
-    const istDate = utcDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+        if(window.markers) window.markers.forEach(m=>map.removeLayer(m));
+        window.markers = [];
 
-    marker.bindPopup(`
-      <b>${ev.elephant_id}</b><br>
-      Device: ${ev.device_id}<br>
-      Time (IST): ${istDate}
-    `);
+        events.forEach(ev=>{
+          const marker = L.marker([ev.lat, ev.lon]).addTo(map);
 
-    window.markers.push(marker);
-  });
-}
+          // Timestamp in IST
+          const istDate = new Date(ev.timestamp).toLocaleString("en-IN", {
+            hour12: true,
+            year: "numeric", month: "2-digit", day: "2-digit",
+            hour: "2-digit", minute: "2-digit", second: "2-digit"
+          });
 
+          marker.bindPopup(`
+            <b>${ev.elephant_id}</b><br>
+            Device: ${ev.device_id}<br>
+            Time (IST): ${istDate}
+          `);
+          window.markers.push(marker);
+        });
 
-  // Load initially and refresh every 5 sec
-  loadEvents();
-  setInterval(loadEvents, 5000);
-</script>
+      } catch(err){ console.error("Error loading events:", err); }
+    }
 
+    loadEvents();
+    setInterval(loadEvents, 5000);
+
+  </script>
 </body>
 </html>
