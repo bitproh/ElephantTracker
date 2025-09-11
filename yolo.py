@@ -56,15 +56,24 @@ for box in results[0].boxes:
         # GET LOCATION
         # -----------------------------
         if class_name == "lakshmikutty":
-            # Example fixed coordinates (Kottayam region)
-            lat, lon = 9.5100, 76.5514
+    # Fixed coordinates (Kottayam region)
+               lat, lon = 9.5100, 76.5514
+        elif class_name == "narayanankutty":
+    # Fixed coordinates (Idukki region, example)
+               lat, lon = 9.6100, 77.5514
         else:
-            # Use current IP-based geolocation
-            g = geocoder.ip('me')
-            lat, lon = g.latlng if g.ok else (None, None)
+               lat, lon = None, None
 
         if lat is not None and lon is not None:
+            import pytz
+            india = pytz.timezone("Asia/Kolkata")
+            timestamp = datetime.datetime.now(india).isoformat()
+            print(f"🐘 Elephant ID: {class_name}")
+
             print(f"📍 Location: Latitude {lat}, Longitude {lon}")
+            print(f"🕒 Detection Time (UTC): {timestamp}")
+
+            
 
             # -----------------------------
             # SEND TO FLASK SERVER
@@ -72,7 +81,7 @@ for box in results[0].boxes:
             data = {
                 "elephant_id": class_name,
                 "device_id": "cam1",   # Change if running on another laptop
-                "timestamp": datetime.datetime.utcnow().isoformat(),
+                "timestamp": timestamp,
                 "lat": lat,
                 "lon": lon
             }

@@ -13,39 +13,50 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // Initialize map (centered on Kerala)
-    const map = L.map('map').setView([9.9312, 76.2673], 8);
+  // Initialize map (centered on Kerala)
+  const map = L.map('map').setView([9.9312, 76.2673], 8);
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-    }).addTo(map);
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+  }).addTo(map);
 
-    // Fetch detections from Flask API
-    async function loadEvents() {
-      const res = await fetch('/api/events');
-      const events = await res.json();
+  // Fetch detections from Flask API
+ async function loadEvents() {
+  // Only get detections from the last 1 hour
+  const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const res = await fetch('/api/events?since=' + since);
+  const events = await res.json();
 
-      // Clear old markers
-      if (window.markers) {
-        window.markers.forEach(m => map.removeLayer(m));
-      }
-      window.markers = [];
+  // Clear old markers from map
+  if (window.markers) {
+    window.markers.forEach(m => map.removeLayer(m));
+  }
+  window.markers = [];
 
-      events.forEach(ev => {
-        const marker = L.marker([ev.lat, ev.lon]).addTo(map);
-        marker.bindPopup(`
-          <b>${ev.elephant_id}</b><br>
-          Device: ${ev.device_id}<br>
-          Time: ${ev.timestamp}
-        `);
-        window.markers.push(marker);
-      });
-    }
+  // Add new markers
+  events.forEach(ev => {
+    const marker = L.marker([ev.lat, ev.lon]).addTo(map);
 
-    // Load initially and refresh every 5 sec
-    loadEvents();
-    setInterval(loadEvents, 5000);
-  </script>
+    // Convert UTC to IST for display
+    const utcDate = new Date(ev.timestamp);
+    const istDate = utcDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+    marker.bindPopup(`
+      <b>${ev.elephant_id}</b><br>
+      Device: ${ev.device_id}<br>
+      Time (IST): ${istDate}
+    `);
+
+    window.markers.push(marker);
+  });
+}
+
+
+  // Load initially and refresh every 5 sec
+  loadEvents();
+  setInterval(loadEvents, 5000);
+</script>
+
 </body>
 </html>
