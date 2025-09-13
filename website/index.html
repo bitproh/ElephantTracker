@@ -11,7 +11,7 @@
 </head>
 
 <body class="bg-slate-100 text-gray-800">
-
+    
   <!-- Main Container -->
   <div id="app" class="min-h-screen flex flex-col">
 
@@ -130,64 +130,94 @@
 
   <!-- Scripts -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    // -------------------
-    // Page Navigation
-    // -------------------
-    const pages = document.querySelectorAll('.page');
-    const initialPage = 'home';
-
-    function showPage(pageId) {
-      pages.forEach(page => page.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
-      window.scrollTo(0, 0);
-      if(pageId === 'tracking') setTimeout(()=>map.invalidateSize(), 200);
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  // Page navigation
+  const pages = document.querySelectorAll('.page');
+  function showPage(pageId) {
+    pages.forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    if (pageId === 'tracking') {
+      setTimeout(() => { map.invalidateSize(); }, 200);
     }
+  }
 
-    document.addEventListener('DOMContentLoaded', ()=>showPage(initialPage));
+  // Init map
+  const map = L.map('map').setView([9.9312, 76.2673], 8);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+  }).addTo(map);
 
-    // -------------------
-    // Leaflet Map
-    // -------------------
-    const map = L.map('map').setView([9.9312, 76.2673], 8);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+  // Globals
+  window.markers = [];
+  window.paths = [];
 
-    // -------------------
-    // Load events (last 1 hour) and show IST
-    // -------------------
-    async function loadEvents() {
-      try {
-        const since = new Date(Date.now() - 60*60*1000).toISOString();
-        const res = await fetch('/api/events?since=' + since);
-        const events = await res.json();
+  // Helper: check if timestamp is from today (IST)
+  function isTodayIST(timestamp) {
+    const evDate = new Date(timestamp);
 
-        if(window.markers) window.markers.forEach(m=>map.removeLayer(m));
-        window.markers = [];
+    // Current date in IST
+    const now = new Date();
+    const options = { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" };
+    const todayIST = new Intl.DateTimeFormat("en-CA", options).format(now);
+    const evIST = new Intl.DateTimeFormat("en-CA", options).format(evDate);
 
-        events.forEach(ev=>{
+    return todayIST === evIST;
+  }
+
+  // Load detections
+  async function loadEvents() {
+    try {
+      const res = await fetch('/api/events');
+      const events = await res.json();
+
+      // Clear previous
+      window.markers.forEach(m => map.removeLayer(m));
+      window.paths.forEach(p => map.removeLayer(p));
+      window.markers = [];
+      window.paths = [];
+
+      // Filter today's detections only
+      const todayEvents = events.filter(ev => isTodayIST(ev.timestamp));
+
+      // Group by elephant
+      const grouped = {};
+      todayEvents.forEach(ev => {
+        if (!grouped[ev.elephant_id]) grouped[ev.elephant_id] = [];
+        grouped[ev.elephant_id].push(ev);
+      });
+
+      // Add markers + paths
+      Object.keys(grouped).forEach(elephant => {
+        const detections = grouped[elephant];
+
+        detections.forEach(ev => {
           const marker = L.marker([ev.lat, ev.lon]).addTo(map);
-
-          // Timestamp in IST
-          const istDate = new Date(ev.timestamp).toLocaleString("en-IN", {
-            hour12: true,
-            year: "numeric", month: "2-digit", day: "2-digit",
-            hour: "2-digit", minute: "2-digit", second: "2-digit"
-          });
-
           marker.bindPopup(`
             <b>${ev.elephant_id}</b><br>
             Device: ${ev.device_id}<br>
-            Time (IST): ${istDate}
+            Time: ${ev.timestamp}
           `);
           window.markers.push(marker);
         });
 
-      } catch(err){ console.error("Error loading events:", err); }
+        // Connect detections of same elephant (only if more than one system/location today)
+        if (detections.length >= 2) {
+          const coords = detections.map(ev => [ev.lat, ev.lon]);
+          const polyline = L.polyline(coords, { color: 'red', weight: 3 }).addTo(map);
+          window.paths.push(polyline);
+        }
+      });
+
+    } catch (err) {
+      console.error("Error loading events:", err);
     }
+  }
 
-    loadEvents();
-    setInterval(loadEvents, 5000);
+  // Auto-refresh
+  loadEvents();
+  setInterval(loadEvents, 5000);
+</script>
 
-  </script>
 </body>
 </html>

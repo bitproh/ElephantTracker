@@ -79,7 +79,6 @@ def serve(path):
     if os.path.exists(os.path.join(STATIC_FOLDER, path)):
         return send_from_directory(STATIC_FOLDER, path)
     return send_from_directory(STATIC_FOLDER, "index.html")
-
 if __name__ == "__main__":
     init_db()
     print("Starting server on 0.0.0.0:5000")

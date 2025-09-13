@@ -12,7 +12,7 @@ import pytz  # For Indian timezone
 model = YOLO("best.pt")
 custom_names = {0: 'lakshmikutty', 1: 'narayanankutty'}
 image_folder = "C:\\Users\\abiaa\\Downloads\\final_year_project\\ElephantTracker\\components"
-SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:5000/api/events")
+SERVER_URL = os.getenv("SERVER_URL", "http://192.168.173.196:5000/api/events")
 
 # -----------------------------
 # IMAGE SELECTION
@@ -48,7 +48,8 @@ for box in results[0].boxes:
         if class_name == "lakshmikutty":
             lat, lon = 9.5100, 76.5514
         elif class_name == "narayanankutty":
-            lat, lon = 9.6100, 77.5514
+            lat, lon = 9.5100, 76.5514
+
         else:
             lat, lon = None, None
 
