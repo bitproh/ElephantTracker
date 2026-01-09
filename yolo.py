@@ -11,8 +11,8 @@ import pytz  # For Indian timezone
 # -----------------------------
 model = YOLO("best.pt")
 custom_names = {0: 'lakshmikutty', 1: 'narayanankutty'}
-image_folder = "C:\\Users\\abiaa\\Downloads\\final_year_project\\ElephantTracker\\components"
-SERVER_URL = os.getenv("SERVER_URL", "http://192.168.173.196:5000/api/events")
+image_folder = "D:\\NKB\\Projects\\EDSS\\Main\\ElephantTracker-1\\components"
+SERVER_URL = "http://10.12.236.105:5000/api/events"
 
 # -----------------------------
 # IMAGE SELECTION
@@ -46,9 +46,10 @@ for box in results[0].boxes:
 
         # Fixed coordinates
         if class_name == "lakshmikutty":
-            lat, lon = 9.5100, 76.5514
+            lat, lon = 8.8932, 76.6141
         elif class_name == "narayanankutty":
-            lat, lon = 9.5100, 76.5514
+            lat, lon = 8.8932, 76.6141
+
 
         else:
             lat, lon = None, None
@@ -57,7 +58,7 @@ for box in results[0].boxes:
             # IST timestamp (12-hour format for printing if needed)
             now_ist = datetime.datetime.now(india_tz)
             timestamp_iso = now_ist.strftime("%Y-%m-%dT%H:%M:%S%z")  # ISO format with IST offset
-
+            
             print(f"🐘 Elephant ID: {class_name}")
             print(f"📍 Location: Latitude {lat}, Longitude {lon}")
             print(f"🕒 Detection Time (IST): {timestamp_iso}")
